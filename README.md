@@ -1,5 +1,7 @@
 # Digital IC Design Portfolio — Wen-Yuan Lin
 
+[中文版](README.zh-TW.md)
+
 M.S. student in Electronics Engineering (Digital Systems Group), National Yang Ming Chiao Tung University.
 This repository documents selected projects from **NYCU IC Design Laboratory (ICLAB), Spring 2026**: what each design does, the architecture decisions behind it, and the results it reached.
 

@@ -1,5 +1,7 @@
 # Dual-Core 16-bit RISC CPU — RTL to GDSII
 
+[中文版](README.zh-TW.md)
+
 ICLAB Final Project, Spring 2026 · UMC 180 nm · Verilog
 
 Two 16-bit MIPS-like cores, each with 8 general-purpose registers, fetch from their own instruction DRAM and share **one** data DRAM through AXI4. The design was taken from RTL through synthesis, power analysis and place-and-route to a sign-off-clean layout.
@@ -63,7 +65,7 @@ I replaced both instruction SRAMs with small register-based prefetch buffers and
 
 ### 2. A dedicated register-read stage, for timing
 
-Synthesis reported the critical path from the instruction register, through the 8-to-1 register-file read multiplexer and the ALU, into the write-back register. I split register read into its own FSM state (`S_RD`), so read and execute land in different cycles. This met timing at a 6 ns clock.
+Synthesis reported the critical path from the instruction register, through the 8-to-1 register-file read multiplexer and the ALU, into the write-back register, with zero slack at 6 ns. I split register read into its own FSM state (`S_RD`), so read and execute land in different cycles and that path gains margin.
 
 ### 3. Correct by construction rather than forwarding
 

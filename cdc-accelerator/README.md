@@ -1,5 +1,7 @@
 # Triple-Clock-Domain Accelerator with CDC
 
+[中文版](README.zh-TW.md)
+
 ICLAB Lab 07, Spring 2026 · Verilog · JasperGold CDC · Score 95 / 100
 
 A compute block that reads its operands from DRAM, with the I/O interface, the compute engine and the DRAM controller each running on its own asynchronous clock. The focus of the lab is moving data safely and efficiently between those clocks.
@@ -36,7 +38,7 @@ flowchart LR
 - **Gray-coded FIFO pointers.** Each pointer crosses domains through a 2-flop bus synchronizer. Gray code changes one bit per increment, so a pointer sampled mid-transition is either the old or the new value, never an invalid mix. Full and empty are therefore conservative but never wrong.
 - **Registered FIFO read data.** The dual-port memory output is registered once more in the read domain, so no unsynchronized path reaches read-side logic.
 - **Handshake data stability.** Source data is held from request until acknowledge, and a new request waits for the previous acknowledge to drop.
-- **Memory side.** The clk3 controller issues SDRAM commands directly (CS#, RAS#, CAS#, WE#, bank, address) and interleaves accesses across banks to reduce DRAM access latency.
+- **Memory side.** The clk3 controller issues SDRAM commands directly (CS#, RAS#, CAS#, WE#, bank, address) and enforces tRCD, tCL and tRP. It keeps the open row of each of the 4 banks, so a row hit skips PRE and ACT and goes straight to READ.
 
 ## CDC sign-off with JasperGold
 

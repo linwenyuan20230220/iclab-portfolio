@@ -1,5 +1,7 @@
 # Formal Verification of a Round-Robin Arbiter
 
+[中文版](README.zh-TW.md)
+
 ICLAB Bonus Lab, Spring 2026 · SystemVerilog Assertions · JasperGold Formal
 
 An 8-requester round-robin arbiter was given as the design under test. I wrote a checker module of SVA properties, attached it to the design with `bind`, and used JasperGold to explore and prove its behavior.
