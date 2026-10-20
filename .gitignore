@@ -1,0 +1,25 @@
+# Allow-list: ignore everything, then add back only what is meant to be public.
+*
+!*/
+!.gitignore
+!README.md
+!**/README.md
+!dual-core-cpu/tools/gen_pattern.py
+
+# Never publish, even if re-added by mistake:
+# course materials, encrypted patterns, testbenches,
+# foundry / SRAM libraries, netlists, SDF, layout, tool logs.
+*.vp
+*.svp
+*.lib
+*.db
+*.lef
+*.sdf
+*.gds
+*.inn
+*.dat
+*.log
+*.tar.gz
+PATTERN*
+TESTBED*
+SUMA180*
