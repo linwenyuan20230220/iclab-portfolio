@@ -4,7 +4,7 @@
 
 ICLAB Lab 07, Spring 2026 · Verilog · JasperGold CDC · Score 95 / 100
 
-A compute block that reads its operands from DRAM, with the I/O interface, the compute engine and the DRAM controller each running on its own asynchronous clock. The focus of the lab is moving data safely and efficiently between those clocks.
+A "tree harvester" that reads data structures from DRAM: it evaluates four prefix-expression trees with a 64-bit ALU (CALC mode), or computes the mean and variance of 1,024 words and outputs those within one standard deviation (GAUSS mode). The I/O interface, the compute engine and the DRAM controller each run on their own asynchronous clock, and the focus of the lab is moving data safely and efficiently between them.
 
 ## Clock domains and crossings
 
@@ -43,7 +43,7 @@ flowchart LR
 ## CDC sign-off with JasperGold
 
 1. **Structural analysis:** all four clock pairs were found, and every crossing was matched to the handshake or FIFO scheme, with no convergence violations.
-2. **Functional analysis:** JasperGold generated 11 protocol properties for these schemes and proved all 11 with unbounded proofs, including:
+2. **Functional analysis:** JasperGold generates 11 protocol properties for these schemes, which the lab requires to be proven, including:
    - no write on full, no read on empty;
    - read and write pointers change exactly one bit at a time;
    - handshake request held until acknowledge, no new request before acknowledge drops, data stable while a request is pending.

@@ -2,9 +2,9 @@
 
 [中文版](README.zh-TW.md)
 
-ICLAB Final Project, Spring 2026 · UMC 180 nm · Verilog
+ICLAB Midterm & Final Project, Spring 2026 · UMC 180 nm · Verilog
 
-Two 16-bit MIPS-like cores, each with 8 general-purpose registers, fetch from their own instruction DRAM and share **one** data DRAM through AXI4. The design was taken from RTL through synthesis, power analysis and place-and-route to a sign-off-clean layout.
+Two 16-bit MIPS-like cores, each with 8 general-purpose registers, fetch from their own instruction DRAM and share **one** data DRAM through AXI4. The midterm project covered the RTL and a self-written testbench; the final project took the same CPU through synthesis, power analysis and place-and-route to a sign-off-clean layout.
 
 ## The problem
 
@@ -57,9 +57,11 @@ flowchart LR
 
 ### 1. Three SRAMs down to one, for peak power
 
-The first working version used three SRAM macros: one instruction cache per core and one data cache. PrimeTime PX showed a peak power about three times my classmates' designs. The power report pointed at the SRAMs being accessed in the same cycle.
+The first working version used three SRAM macros: one instruction cache per core and one data cache. PrimeTime PX reported 63.9 mW average and 337.4 mW peak power, with the SRAM macros drawing 87.6% of the average power.
 
 I replaced both instruction SRAMs with small register-based prefetch buffers and kept a single 64×16 SRAM as the data cache. SRAM macro area dropped from 167,384 µm² to 47,941 µm² (−71%), and total synthesized area from 332,480 µm² to 252,831 µm² (−24%). The chip-select of that SRAM is also driven low in every FSM state that does not touch it (fetch, register read, decode, write-back, and AXI waits).
+
+Across these revisions, peak power fell from 337.4 mW to 115.6 mW (−66%) and average power from 63.9 mW to 12.1 mW (−81%), even though the clock got faster.
 
 **Trade-off:** registers cost more area per bit than SRAM, and the instruction buffer only covers 8 words, so a loop longer than 16 bytes refetches. Because the score multiplies average power by peak power, removing the peak was worth it.
 
@@ -91,8 +93,14 @@ Because both cores share one FSM, they never get ahead of each other. The store-
 
 ## Verification
 
-- TA-provided pattern at RTL, gate level (with timing checks) and post-layout.
-- My own [constrained-random generator](tools/gen_pattern.py) for both instruction DRAMs and the data DRAM. It never lets both cores store at the same instruction count, so it stresses the store/load ordering path.
+The midterm project required writing our own testbench, which I then reused for the final design.
+
+- **Golden model:** a behavioral ISA simulator runs the generated program first and records every register after each instruction and the data memory every 50 instructions; the testbench compares the DUT against these snapshots.
+- **Program generation:** the generator follows the real PC trace, so backward BEQ loops and forward JUMPs are placed safely, and every LOAD/STORE address is checked against the current golden register values.
+- **Corner cases:** same-address store/load collisions between the two cores at the same instruction count, both cores loading one address, signed SLT and large MULT operands, and I-cache misses after backward branches.
+- **Scale:** 6 rounds with different seeds, about 25,000 executed instructions, plus AXI handshake and response-latency monitors.
+- An earlier [Python generator](tools/gen_pattern.py) produced the DRAM images while bringing the design up.
+- The TA pattern was run at RTL, gate level with timing checks, and post-layout.
 
 ## What I would do next
 

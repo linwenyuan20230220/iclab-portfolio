@@ -4,7 +4,7 @@
 
 ICLAB Lab 07 · 2026 春季 · Verilog · JasperGold CDC · 成績 95 / 100
 
-一個從 DRAM 讀取資料來運算的加速器，I/O 介面、運算引擎和 DRAM 控制器各自跑在互不同步的 clock 上。這個 lab 的重點是讓資料在這些 clock 之間安全又有效率地傳遞。
+一個從 DRAM 讀取資料結構的「tree harvester」：CALC 模式用 64-bit ALU 計算 4 棵 prefix expression tree；GAUSS 模式算出 1,024 筆資料的平均和變異數，輸出落在一個標準差內的資料。I/O 介面、運算引擎和 DRAM 控制器各自跑在互不同步的 clock 上，這個 lab 的重點是讓資料在它們之間安全又有效率地傳遞。
 
 ## 時脈域與跨域路徑
 
@@ -43,7 +43,7 @@ flowchart LR
 ## 用 JasperGold 做 CDC 驗證
 
 1. **結構分析：** 找出全部 4 組 clock pair，每一條跨域路徑都對應到 handshake 或 FIFO 方案，沒有 convergence 問題。
-2. **功能分析：** JasperGold 針對這些同步方案自動產生 11 條 protocol property，全部以 unbounded proof 證明成立，例如：
+2. **功能分析：** JasperGold 針對這些同步方案自動產生 11 條 protocol property，lab 要求全部證明成立，例如：
    - FIFO full 時不寫入、empty 時不讀出；
    - 讀寫指標每次只變一個 bit；
    - Handshake 的 request 在收到 acknowledge 前保持住、acknowledge 放掉前不送新 request、request 等待期間資料保持穩定。
