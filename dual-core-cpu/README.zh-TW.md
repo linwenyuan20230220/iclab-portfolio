@@ -59,15 +59,19 @@ flowchart LR
 
 第一個能動的版本用了 3 顆 SRAM macro：兩核各一顆 instruction cache，再加一顆 data cache。PrimeTime PX 顯示 peak power 大約是同學設計的 3 倍，power report 指向多顆 SRAM 在同一個 cycle 被存取。
 
-我把兩顆 instruction SRAM 換成小型的暫存器 prefetch buffer，只保留一顆 SRAM 當 data cache。這顆 SRAM 的 chip-select 也在所有用不到它的 FSM 狀態拉低，包括取指令、讀暫存器、解碼、寫回和等待 AXI 的狀態。
+我把兩顆 instruction SRAM 換成小型的暫存器 prefetch buffer，只保留一顆 64×16 SRAM 當 data cache。SRAM macro 面積從 167,384 µm² 降到 47,941 µm²（−71%），合成總面積從 332,480 µm² 降到 252,831 µm²（−24%）。這顆 SRAM 的 chip-select 也在所有用不到它的 FSM 狀態拉低，包括取指令、讀暫存器、解碼、寫回和等待 AXI 的狀態。
 
 **取捨：** 暫存器每個 bit 的面積比 SRAM 大，而且 instruction buffer 只有 8 word，迴圈超過 16 byte 就要重新抓。但評分是平均功耗乘上 peak power，消掉尖峰比較划算。
 
 ### 2. 把讀 register file 獨立成一拍，改善時序
 
-合成報告顯示 critical path 從 instruction register 出發，經過 8 選 1 的 register file 讀取 mux 和 ALU，進到寫回暫存器，在 6 ns 時 slack 剛好是 0。我把讀暫存器拆成獨立的 FSM 狀態（`S_RD`），讓讀取和運算落在不同 cycle，這條路徑就多出了餘裕。
+較早的版本在 6 ns 剛好達標（slack 為 0），critical path 從 instruction register 出發，經過 8 選 1 的 register file 讀取 mux 和 ALU，進到寫回暫存器。我把讀暫存器拆成獨立的 FSM 狀態（`S_RD`），讓讀取和運算落在不同 cycle；再加上記憶體系統變小，最終版本在 **4.4 ns** 達標，快了 27%。
 
-### 3. 用結構保證正確，而不是靠 forwarding
+### 3. 依實測 peak power 決定 power ring 寬度
+
+Power ring 的供電能力必須大於 PTPX 量到的 peak power，換算方式是每 µm 寬度 1 mA、電壓 1.8 V。用 7 組 interleaving 時，最小寬度 9 µm 只能供 113.4 mW，低於 115.6 mW 的 peak。加寬到 9.18 µm 可供 115.67 mW，剛好通過，同時讓 ring 盡量窄。
+
+### 4. 用結構保證正確，而不是靠 forwarding
 
 因為兩核共用一個 FSM，任一核都不會跑到另一核前面。store-before-load 和「同一時間只能一核 store」這兩條規則，就簡化成 memory queue 裡兩筆存取的排序，核心之間不需要 forwarding 或 hazard 偵測。代價是一核在等 cache miss 時，另一核也要跟著等。
 
@@ -75,8 +79,12 @@ flowchart LR
 
 | 指標 | 數值 |
 | --- | --- |
-| 時脈週期 | 6 ns |
-| 晶片面積（Innovus） | 0.73 mm² |
+| 時脈週期（合成與 post-layout） | 4.4 ns |
+| 總 cycle 數（測試程式） | 102,919 |
+| 合成面積 | 252,831 µm²（其中 SRAM 47,941 µm²） |
+| 晶片面積（Innovus） | 0.729 mm² |
+| 平均／peak power（PTPX） | 12.1 mW / 115.6 mW |
+| Power ring | 7 組 × 9.18 µm，可供 115.67 mW |
 | I/O pin 數 | 460 |
 | Sign-off | 含 SI 的 setup/hold 無 violation，DRV 為 0，DRC、connectivity、LVS 全部通過 |
 | 排名 | 全班前 36%（performance 分數） |

@@ -59,15 +59,19 @@ flowchart LR
 
 The first working version used three SRAM macros: one instruction cache per core and one data cache. PrimeTime PX showed a peak power about three times my classmates' designs. The power report pointed at the SRAMs being accessed in the same cycle.
 
-I replaced both instruction SRAMs with small register-based prefetch buffers and kept a single SRAM as the data cache. The chip-select of that SRAM is also driven low in every FSM state that does not touch it (fetch, register read, decode, write-back, and AXI waits).
+I replaced both instruction SRAMs with small register-based prefetch buffers and kept a single 64×16 SRAM as the data cache. SRAM macro area dropped from 167,384 µm² to 47,941 µm² (−71%), and total synthesized area from 332,480 µm² to 252,831 µm² (−24%). The chip-select of that SRAM is also driven low in every FSM state that does not touch it (fetch, register read, decode, write-back, and AXI waits).
 
 **Trade-off:** registers cost more area per bit than SRAM, and the instruction buffer only covers 8 words, so a loop longer than 16 bytes refetches. Because the score multiplies average power by peak power, removing the peak was worth it.
 
 ### 2. A dedicated register-read stage, for timing
 
-Synthesis reported the critical path from the instruction register, through the 8-to-1 register-file read multiplexer and the ALU, into the write-back register, with zero slack at 6 ns. I split register read into its own FSM state (`S_RD`), so read and execute land in different cycles and that path gains margin.
+The earlier version closed at 6 ns with zero slack, on a path from the instruction register, through the 8-to-1 register-file read multiplexer and the ALU, into the write-back register. I split register read into its own FSM state (`S_RD`), so read and execute land in different cycles. Together with the smaller memory system, the final design closed at **4.4 ns**, 27% faster.
 
-### 3. Correct by construction rather than forwarding
+### 3. Power ring sized to the measured peak
+
+The ring must supply more than the PTPX peak power, at 1 mA per µm of width and 1.8 V. With 7 interleaved pairs, the minimum 9 µm width gives only 113.4 mW, below the 115.6 mW peak. Widening to 9.18 µm gives 115.67 mW, which passes while keeping the ring as narrow as possible.
+
+### 4. Correct by construction rather than forwarding
 
 Because both cores share one FSM, they never get ahead of each other. The store-before-load and exclusive-store rules then reduce to ordering two entries in the memory queue, with no forwarding or hazard logic between cores. The cost is that a core waiting on a cache miss also stalls the other.
 
@@ -75,8 +79,12 @@ Because both cores share one FSM, they never get ahead of each other. The store-
 
 | Metric | Value |
 | --- | --- |
-| Clock period | 6 ns |
-| Chip area (Innovus) | 0.73 mm² |
+| Clock period (synthesis and post-layout) | 4.4 ns |
+| Total cycles (test program) | 102,919 |
+| Synthesized area | 252,831 µm² (SRAM 47,941 µm²) |
+| Chip area (Innovus) | 0.729 mm² |
+| Average / peak power (PTPX) | 12.1 mW / 115.6 mW |
+| Power ring | 7 pairs × 9.18 µm, 115.67 mW capacity |
 | I/O pins | 460 |
 | Sign-off | No setup/hold violations incl. SI, DRV 0, clean DRC, connectivity and LVS |
 | Ranking | Top 36% of the class (performance score) |
