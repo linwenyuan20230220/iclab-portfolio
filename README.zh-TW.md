@@ -9,10 +9,11 @@
 | --- | --- | --- |
 | [雙核 16-bit RISC CPU](dual-core-cpu/README.zh-TW.md) | RTL → GDSII、記憶體系統、低功耗 | 3 個 AXI4 master、write-through D-cache、跨核記憶體存取順序、SRAM 從 3 顆減到 1 顆壓 peak power、Innovus APR 通過 DRC／LVS |
 | [晶片層級 APR 與 IR Drop 修正](chip-apr-ir-drop/README.zh-TW.md) | 實體設計、電源完整性 | 把自己 Lab 05 的 diffusion model 加速器連同 SRAM macro 做完含 pad ring 的 APR；最大 IR drop 從 70 mV 降到 43 mV，符合 50 mV 標準 |
+| [Clock Gating 低功耗加速器](low-power-clock-gating/README.zh-TW.md) | 低功耗、等價性驗證 | Clock gating 讓總功耗降低 36%（4.30 → 2.74 mW），用 JasperGold SEC 證明有無 gating 的 RTL 等價，排名 31 / 145 |
 | [三時脈域加速器](cdc-accelerator/README.zh-TW.md) | 跨時脈域（CDC） | Handshake 同步器加 3 組 Gray code 指標的 async FIFO、SDRAM 命令控制器、JasperGold CDC 驗證 |
 | [Round-Robin 仲裁器 Formal 驗證](formal-arbiter/README.zh-TW.md) | Assertion-based formal | SVA 的 cover／assert，從反例波形找出 starvation bug 的根因 |
 
-**工具流程：** VCS（RTL、gate-level、post-layout 模擬）→ Design Compiler（`compile_ultra`）→ PrimeTime PX（功耗）→ Cadence Innovus（APR）→ JasperGold（formal、CDC）、Innovus rail analysis（IR drop）。製程為 UMC 180 nm standard cell。
+**工具流程：** VCS（RTL、gate-level、post-layout 模擬）→ Design Compiler（`compile_ultra`）→ PrimeTime PX（功耗）→ Cadence Innovus（APR）→ JasperGold（formal、CDC、SEC）、Innovus rail analysis（IR drop）。製程為 UMC 180 nm standard cell。
 
 ## 這個 repo 放了什麼、沒放什麼
 
