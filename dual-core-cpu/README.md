@@ -89,7 +89,6 @@ Because both cores share one FSM, they never get ahead of each other. The store-
 | Power ring | 7 pairs × 9.18 µm, 115.67 mW capacity |
 | I/O pins | 460 |
 | Sign-off | No setup/hold violations incl. SI, DRV 0, clean DRC, connectivity and LVS |
-| Ranking | Top 36% of the class (performance score) |
 
 ## Verification
 

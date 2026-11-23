@@ -3,7 +3,7 @@
 [English](README.md)
 
 國立陽明交通大學電子研究所碩士生（數位系統組）。
-這個 repo 整理 **2026 春季 ICLAB（積體電路設計實驗）** 的代表性專案，說明每個設計在做什麼、背後的架構取捨，以及最後達到的結果。
+這個 repo 整理 **2026 春季 ICLAB（積體電路設計實驗）** 與 **2026 秋季研究所課程 Physical Design Automation** 的代表性專案，說明每個設計或工具在做什麼、背後的取捨，以及最後達到的結果。
 
 | 專案 | 重點 | 亮點 |
 | --- | --- | --- |
@@ -12,6 +12,7 @@
 | [Clock Gating 低功耗加速器](low-power-clock-gating/README.zh-TW.md) | 低功耗、等價性驗證 | Clock gating 讓總功耗降低 36%（4.30 → 2.74 mW），用 JasperGold SEC 證明有無 gating 的 RTL 等價，排名 31 / 145 |
 | [三時脈域加速器](cdc-accelerator/README.zh-TW.md) | 跨時脈域（CDC） | Handshake 同步器加 3 組 Gray code 指標的 async FIFO、SDRAM 命令控制器、JasperGold CDC 驗證 |
 | [Round-Robin 仲裁器 Formal 驗證](formal-arbiter/README.zh-TW.md) | Assertion-based formal | SVA 的 cover／assert，從反例波形找出 starvation bug 的根因 |
+| [實體設計演算法（C++）](physical-design-automation/README.zh-TW.md) | EDA 演算法 | Corner stitching；把 10 萬顆 cell 的 netlist 分到 3D IC 兩層 die 的 multilevel FM partitioner；含 soft block 與邊界／MIB 限制的 B\*-tree 模擬退火 floorplanner |
 
 **工具流程：** VCS（RTL、gate-level、post-layout 模擬）→ Design Compiler（`compile_ultra`）→ PrimeTime PX（功耗）→ Cadence Innovus（APR）→ JasperGold（formal、CDC、SEC）、Innovus rail analysis（IR drop）。製程為 UMC 180 nm standard cell。
 

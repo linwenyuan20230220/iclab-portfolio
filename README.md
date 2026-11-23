@@ -3,7 +3,7 @@
 [中文版](README.zh-TW.md)
 
 M.S. student in Electronics Engineering (Digital Systems Group), National Yang Ming Chiao Tung University.
-This repository documents selected projects from **NYCU IC Design Laboratory (ICLAB), Spring 2026**: what each design does, the architecture decisions behind it, and the results it reached.
+This repository documents selected projects from **NYCU IC Design Laboratory (ICLAB), Spring 2026**, and from the graduate course **Physical Design Automation, Fall 2026**: what each design or tool does, the decisions behind it, and the results it reached.
 
 | Project | Focus | Highlights |
 | --- | --- | --- |
@@ -12,6 +12,7 @@ This repository documents selected projects from **NYCU IC Design Laboratory (IC
 | [Low-Power Accelerator with Clock Gating](low-power-clock-gating/) | Low power, equivalence checking | Clock gating cut total power by 36% (4.30 → 2.74 mW); gated and ungated RTL proven equivalent with JasperGold SEC; ranked 31 / 145 |
 | [Triple-Clock-Domain Accelerator](cdc-accelerator/) | Clock domain crossing | Handshake synchronizer + 3 async FIFOs with Gray-coded pointers, SDRAM command controller, JasperGold CDC sign-off |
 | [Round-Robin Arbiter Formal Verification](formal-arbiter/) | Assertion-based formal | SVA cover / assert properties, starvation bug root-caused from a counterexample |
+| [Physical Design Algorithms in C++](physical-design-automation/) | EDA algorithms | Corner stitching; multilevel FM partitioning of a 100k-cell netlist across two 3D-IC dies; B\*-tree simulated-annealing floorplanner with soft blocks and boundary/MIB constraints |
 
 **Tool flow:** VCS (RTL, gate-level, post-layout simulation) → Design Compiler (`compile_ultra`) → PrimeTime PX (power) → Cadence Innovus (APR) → JasperGold (formal, CDC, SEC), Innovus rail analysis (IR drop). Technology: UMC 180 nm standard cells.
 

@@ -89,7 +89,6 @@ Power ring 的供電能力必須大於 PTPX 量到的 peak power，換算方式�
 | Power ring | 7 組 × 9.18 µm，可供 115.67 mW |
 | I/O pin 數 | 460 |
 | Sign-off | 含 SI 的 setup/hold 無 violation，DRV 為 0，DRC、connectivity、LVS 全部通過 |
-| 排名 | 全班前 36%（performance 分數） |
 
 ## 驗證
 
