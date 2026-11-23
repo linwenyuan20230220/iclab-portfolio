@@ -71,7 +71,7 @@ The limit is 120 seconds on a single thread.
 **Approach.**
 
 1. **Soft-block shapes.** For each area, list the legal integer shapes that use the least area (about 0.99 × target), then sample about 40 aspect ratios. All members of an MIB group share one shape index, so **every MIB group is satisfied by construction**.
-2. **Safety net.** A constructive legalizer builds a legal floorplan first. Boundary blocks go on their edges, and the rest are placed by skyline best fit, where soft blocks can take the exact width of a gap.
+2. **Safety net.** A constructive legalizer builds a legal floorplan first. Boundary blocks go on their edges, and the rest are placed by skyline best fit (where a soft block can take the exact width of a gap) or by bottom-left fill. It is randomized and also runs in mirrored coordinate frames, and if annealing cannot fit the outline, extra time goes to finding a fallback that keeps every boundary constraint.
 3. **Simulated annealing on a B\*-tree with contour packing.**
    - The contour is a linked list, so packing costs amortized O(1) per block.
    - Preplaced blocks are tree nodes. Overlap with them is a penalty instead of a hard push, which smooths the search landscape on tight cases.
@@ -85,7 +85,7 @@ The limit is 120 seconds on a single thread.
 5. **Large-neighborhood search.** Ruin and recreate in absolute coordinates, including a targeted move that clears space on a required edge. A boundary constraint is given up for wirelength only when that moves the wirelength into the scoring band.
 6. **Selection and self-check.** The final candidate is chosen by the real scoring formula. Before writing the output, the program re-checks all 8 legality rules. It computes wirelength exactly with doubled integer coordinates, because centroids can fall on half-units.
 
-**Result on the public case** (50 blocks): legal floorplan meeting all 10 boundary constraints and all 4 MIB groups, with wirelength 289,294.5, about 1.0% above the TA's reference of 286,355.5. Verifier score on the course workstation: 18.97 / 20.
+**Result.** On the public case (50 blocks), every run on the course workstation gives a legal floorplan that meets all 10 boundary constraints and all 4 MIB groups. The hidden cases go up to 200 blocks with about 5% whitespace, so I also built a 13-case regression suite with a random case generator (up to 200 blocks, 5–11% whitespace, flat and tall outlines, few or many preplaced blocks) and a script that runs it in parallel and scores each run with the official verifier. The submitted version produced a legal floorplan in 25 of 26 runs; the one failure was the tightest 5%-whitespace case.
 
 ---
 

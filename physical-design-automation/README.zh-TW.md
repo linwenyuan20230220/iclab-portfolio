@@ -67,7 +67,7 @@ Space tile 必須一直維持**最大水平條帶**：左右不能相鄰另一�
 
 **方法：**
 1. **Soft block 形狀：** 每種面積先列出面積最小（約 0.99 倍目標面積）的合法整數形狀，再取樣約 40 種長寬比。同一個 MIB 群組共用同一個形狀編號，所以 **MIB 限制在設計上一定滿足**。
-2. **保底解：** 先用建構式的 legalizer 產生合法 floorplan。有邊界限制的 block 先放到指定邊上，其餘用 skyline best-fit 擺放，soft block 可以調整成剛好填滿空隙的寬度。
+2. **保底解：** 先用建構式的 legalizer 產生合法 floorplan。有邊界限制的 block 先放到指定邊上，其餘用 skyline best-fit（soft block 可以調整成剛好填滿空隙的寬度）或 bottom-left fill 擺放。Legalizer 是隨機化的，也會在鏡像座標下執行；如果模擬退火塞不進外框，就把更多時間用在找出能保住所有邊界限制的保底解。
 3. **B\*-tree 模擬退火加 contour packing：**
    - Contour 用 linked list 實作，每個 block 的 packing 均攤 O(1)。
    - Preplaced block 也是樹的節點；和它重疊時給懲罰，而不是硬推開，讓緊的測資比較容易搜尋。
@@ -81,7 +81,7 @@ Space tile 必須一直維持**最大水平條帶**：左右不能相鄰另一�
 5. **Large-neighborhood search：** 在絕對座標下做 ruin-and-recreate，其中包含一個專門清出指定邊空間的移動。只有在 wirelength 落入計分區間時，才會用一個邊界限制換取 wirelength。
 6. **挑選與自我檢查：** 用真正的計分公式挑出最後的解，輸出前重新檢查全部 8 條合法性規則。質心可能落在半格上，所以 wirelength 用兩倍的整數座標精確計算。
 
-**公開測資結果（50 個 block）：** 合法 floorplan，10 個邊界限制與 4 個 MIB 群組全部滿足，wirelength 289,294.5，比助教參考值 286,355.5 高約 1.0%。在課程工作站上的 verifier 分數為 18.97 / 20。
+**成果：** 公開測資（50 個 block）在課程工作站上每次執行都得到合法 floorplan，10 個邊界限制與 4 個 MIB 群組全部滿足。隱藏測資最多 200 個 block、whitespace 約 5%，所以我另外做了 13 個測資的回歸測試：用隨機產生器產生最多 200 個 block、5–11% whitespace、扁長或細高外框、preplaced block 多或少的測資，再用腳本平行執行並以官方 verifier 計分。最後交出的版本在 26 次執行中有 25 次產生合法 floorplan，唯一失敗的是最緊的 5% whitespace 測資。
 
 ---
 
