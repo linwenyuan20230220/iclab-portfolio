@@ -4,6 +4,8 @@
 !.gitignore
 !README.md
 !**/README.md
+!README.zh-TW.md
+!**/README.zh-TW.md
 !dual-core-cpu/tools/gen_pattern.py
 
 # Never publish, even if re-added by mistake:
